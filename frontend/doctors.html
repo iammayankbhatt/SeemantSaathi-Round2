@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Doctors | SeemantSaathi</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <link rel="stylesheet" href="style.css?v=1">
+
+</head>
+<script>
+    if (!localStorage.getItem('user_authenticated')) {
+        window.location.href = 'index.html';
+    }
+</script>
+
+<body>
+
+
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-inner">
+                <div class="emergency-tag">
+                    <ion-icon name="alert-circle"></ion-icon> <span data-lang-key="emergency_text">EMERGENCY: 108</span>
+                </div>
+                <div class="top-links">
+                    <a href="index.html" data-lang-key="nav_about_us">About Us</a>
+                    <a href="index.html" data-lang-key="nav_for_doctors">For Doctors</a>
+                    <a href="index.html" data-lang-key="nav_hospitals">Hospitals</a>
+                    <a href="index.html" data-lang-key="nav_contact"
+                        style="display: flex; align-items: center; gap: 5px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.05 12.05 0 0 0 .57 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.05 12.05 0 0 0 2.81.57A2 2 0 0 1 22 16.92z">
+                            </path>
+                        </svg> Contact
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <header>
+        <div class="container">
+
+            <div class="header-main-row">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon-circle">
+
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            style="color: var(--primary);">
+                            <path d="M7 5V10C7 12.7614 9.23858 15 12 15C14.7614 15 17 12.7614 17 10V5"
+                                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+                            <path d="M12 15V18C12 19.6569 13.3431 21 15 21C16.6569 21 18 19.6569 18 18V16"
+                                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+                            <circle cx="18" cy="14" r="2.5" stroke="currentColor" stroke-width="2.5" />
+                            <path d="M5 5H9M15 5H19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <div class="logo-text-col">
+                        <span class="brand-name" data-lang-key="brand_name">SeemantSaathi</span>
+                        <span class="tagline" data-lang-key="header_tagline">Doctor tak seedha raasta | Predict.
+                            Connect. Care</span>
+                    </div>
+                </a>
+
+                <div class="header-actions">
+                    <button class="lang-toggle" id="lang-toggle">
+                        <ion-icon name="globe-outline" style="vertical-align: middle;"></ion-icon> English
+                    </button>
+                    <span id="header-user-welcome" class="auth-required"
+                        style="display: none; font-weight: 700; color: var(--primary); font-size: 14px; margin-right: 12px; text-transform: capitalize;"></span>
+                    <a href="doctors.html" class="book-btn auth-required" data-lang-key="btn_book_appt">Book
+                        Appointment</a>
+                    <button id="logout-btn" class="book-btn auth-required" data-lang-key="logout_btn"
+                        style="background: var(--danger); color: white; display: none; border: none; margin-left: 10px;">Logout</button>
+
+                    <button class="menu-toggle-mobile" id="mobile-menu-toggle">
+                        <ion-icon name="menu-outline"></ion-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="nav-row">
+            <div class="container">
+                <nav class="main-nav">
+                    <a href="index.html" class="nav-item" data-lang-key="nav_home">Home</a>
+                    <a href="index.html" class="nav-item"
+                        onclick="window.location.href='index.html?tab=about'; return false;"
+                        data-lang-key="tab_about">About</a>
+                    <a href="#" id="nav-link-firstaid" class="nav-item" data-lang-key="nav_firstaid">First Aid Guide</a>
+                    <a href="symptoms.html" class="nav-item auth-required" data-lang-key="nav_checker">Symptom
+                        Checker</a>
+                    <a href="doctors.html" class="nav-item auth-required active" data-lang-key="nav_doctors">Find
+                        Doctor</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="section-padding">
+        <div class="container">
+            <div class="section-head">
+                <h2 data-lang-key="doctor_page_title">Specialists Near You</h2>
+                <p data-lang-key="doctor_page_desc">Locate trusted hospitals and clinics in your vicinity.</p>
+            </div>
+
+
+            <div id="map"
+                style="margin-bottom: 50px; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-lg);"></div>
+
+
+            <div id="doctor-list" class="doctor-list-container">
+
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+    <div id="high-severity-modal" class="remote-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 class="modal-title" id="modal-title" data-lang-key="modal_attention">Attention</h3>
+            <p class="modal-body" id="modal-body" data-lang-key="modal_severity_body">Your symptoms indicate a condition
+                that may require immediate
+                attention.</p>
+            <button class="action-modal" id="modal-action-btn" data-lang-key="btn_consult_now">Consult Doctor
+                Now</button>
+        </div>
+    </div>
+
+    <div id="confirm-action-modal" class="remote-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 class="modal-title" id="confirm-modal-title"></h3>
+            <p class="modal-body" id="confirm-modal-body"></p>
+            <button class="action-modal" id="confirm-modal-action-btn" data-lang-key="btn_confirm">Confirm</button>
+        </div>
+    </div>
+
+
+    <div id="first-aid-modal" class="remote-modal">
+        <div class="modal-content wide">
+            <h3 class="modal-title">
+                <img src="images/first-aid-logo.png" alt="First Aid Logo"
+                    style="height: 40px; vertical-align: middle; margin-right: 15px;">
+                <span data-lang-key="fa_title">First Aid Guide</span>
+                <span class="close-modal"
+                    onclick="document.getElementById('first-aid-modal').classList.remove('active')"
+                    style="color: white; opacity: 1; cursor: pointer;">&times;</span>
+            </h3>
+            <div class="first-aid-grid">
+                <!-- Populated by script.js -->
+            </div>
+
+
+            <div class="fa-extra-section">
+                <div class="fa-dos-donts">
+                    <div class="fa-col">
+                        <h4 class="dos-title"><ion-icon name="checkmark-circle"></ion-icon> <span
+                                data-lang-key="fa_dos_title">Do's</span></h4>
+                        <ul class="fa-check-list">
+                            <li data-lang-key="fa_do_1">Stay calm</li>
+                            <li data-lang-key="fa_do_2">Call emergency services when needed</li>
+                            <li data-lang-key="fa_do_3">Use clean materials</li>
+                            <li data-lang-key="fa_do_4">Reassure the person</li>
+                        </ul>
+                    </div>
+                    <div class="fa-col">
+                        <h4 class="donts-title"><ion-icon name="close-circle"></ion-icon> <span
+                                data-lang-key="fa_donts_title">Don'ts</span></h4>
+                        <ul class="fa-cross-list">
+                            <li data-lang-key="fa_dont_1">Don’t give food/drink to unconscious person</li>
+                            <li data-lang-key="fa_dont_2">Don’t move a person with spinal injury</li>
+                            <li data-lang-key="fa_dont_3">Don’t apply home remedies to serious injuries</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="fa-emergency">
+                    <h4 data-lang-key="fa_emergency_title">Emergency Numbers (India)</h4>
+                    <div class="emer-badges">
+                        <div class="emer-badge" data-lang-key="emergency_108">Ambulance: <strong>108</strong></div>
+                        <div class="emer-badge" data-lang-key="emergency_112">Emergency: <strong>112</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4 data-lang-key="footer_about">About SeemantSaathi</h4>
+                    <p data-lang-key="footer_desc" style="color: inherit; opacity: 0.9;">Connecting rural India with
+                        expert healthcare. Predict symptoms, find doctors, and get first aid instantly.</p>
+                </div>
+                <div class="footer-col">
+                    <h4 data-lang-key="footer_quick">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><ion-icon name="arrow-forward"></ion-icon> <a href="index.html"
+                                data-lang-key="nav_home">Home</a></li>
+                        <li><ion-icon name="arrow-forward"></ion-icon> <a href="symptoms.html"
+                                data-lang-key="nav_checker">Symptom Checker</a></li>
+                        <li><ion-icon name="arrow-forward"></ion-icon> <a href="doctors.html"
+                                data-lang-key="nav_doctors">Find Doctors</a></li>
+                        <li><ion-icon name="arrow-forward"></ion-icon> <a href="#" data-lang-key="nav_firstaid"
+                                onclick="document.getElementById('first-aid-modal').classList.add('active'); return false;">First
+                                Aid</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4 data-lang-key="footer_centers_title">Our Centers</h4>
+                    <p style="margin-top: 10px; font-weight: 500; display: flex; align-items: center; gap: 8px;">
+                        <ion-icon name="location" style="color: var(--secondary);"></ion-icon>
+                        <span data-lang-key="center_bhimtal">Bhimtal</span>
+                    </p>
+                </div>
+
+            </div>
+            <div class="copyright">
+                <p data-lang-key="footer_copyright">© 2025 SeemantSaathi. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
