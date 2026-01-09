@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeemantSaathi | Rural Health Assistant</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="style.css?v=1">
+</head>
+
+<body>
+
+
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-inner">
+                <div class="emergency-tag">
+                    <ion-icon name="alert-circle"></ion-icon> <span data-lang-key="emergency_text">EMERGENCY: 108</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <header>
+        <div class="container">
+
+            <div class="header-main-row">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon-circle">
+
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            style="color: var(--primary);">
+                            <path d="M7 5V10C7 12.7614 9.23858 15 12 15C14.7614 15 17 12.7614 17 10V5"
+                                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+                            <path d="M12 15V18C12 19.6569 13.3431 21 15 21C16.6569 21 18 19.6569 18 18V16"
+                                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+                            <circle cx="18" cy="14" r="2.5" stroke="currentColor" stroke-width="2.5" />
+                            <path d="M5 5H9M15 5H19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <div class="logo-text-col">
+                        <span class="brand-name" data-lang-key="brand_name">SeemantSaathi</span>
+                        <span class="tagline" data-lang-key="header_tagline">Doctor tak seedha raasta | Predict.
+                            Connect. Care</span>
+                    </div>
+                </a>
+
+                <div class="header-actions">
+                    <button class="lang-toggle" id="lang-toggle">
+                        <ion-icon name="globe-outline" style="vertical-align: middle;"></ion-icon> English
+                    </button>
+                    <span id="header-user-welcome" class="auth-required"
+                        style="display: none; font-weight: 700; color: var(--primary); font-size: 14px; margin-right: 12px; text-transform: capitalize;"></span>
+                    <a href="doctors.html" class="book-btn auth-required" data-lang-key="btn_book_appt">Book
+                        Appointment</a>
+                    <button id="logout-btn" class="book-btn auth-required" data-lang-key="logout_btn"
+                        style="background: var(--danger); color: white; display: none;">Logout</button>
+
+                    <button class="menu-toggle-mobile" id="mobile-menu-toggle">
+                        <ion-icon name="menu-outline"></ion-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="nav-row">
+            <div class="container">
+                <nav class="main-nav">
+                    <a href="index.html" id="nav-link-home" class="nav-item active" onclick="switchTab('login');"
+                        data-lang-key="nav_home">Home</a>
+                    <a href="index.html" id="nav-link-about" class="nav-item"
+                        onclick="switchTab('about'); return false;" data-lang-key="tab_about">About</a>
+                    <a href="#" id="nav-link-firstaid" class="nav-item" data-lang-key="nav_firstaid"
+                        onclick="document.getElementById('first-aid-modal').classList.add('active'); return false;">First
+                        Aid Guide</a>
+                    <a href="symptoms.html" class="nav-item auth-required" data-lang-key="nav_checker">Symptom
+                        Checker</a>
+                    <a href="doctors.html" class="nav-item auth-required" data-lang-key="nav_doctors">Find Doctor</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+
+    <div id="view-login" class="section-padding" style="display: block; min-height: 60vh;">
+        <div class="container">
+            <div class="glass-card" style="width: 100%; max-width: 450px; margin: 0 auto; text-align: center;">
+                <div
+                    style="background: #ecfdf5; width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; color: var(--primary);">
+                    <ion-icon name="person" size="large"></ion-icon>
+                </div>
+
+                <h2 style="margin-bottom: 10px;" data-lang-key="login_title">Patient Login</h2>
+                <p style="color: var(--text-muted); margin-bottom: 2.5rem; font-size: 16px;"
+                    data-lang-key="login_subtitle">Access your digital health records</p>
+
+                <form id="login-form">
+                    <div id="step-mobile">
+                        <div class="form-group" style="text-align: left; margin-bottom: 15px;">
+                            <label class="form-label" style="display: block; margin-bottom: 5px; font-weight: 500;"
+                                data-lang-key="full_name">Patient Name</label>
+                            <input type="text" id="name-input" class="form-input" placeholder="e.g. Ram Singh" required
+                                data-lang-key="placeholder_name_example"
+                                style="width: 100%; padding: 10px; border: 1px solid #ddd; border-top-left-radius: var(--radius-md); border-top-right-radius: var(--radius-md);">
+                        </div>
+                        <div class="form-group" style="text-align: left; margin-bottom: 20px;">
+                            <label class="form-label" style="display: block; margin-bottom: 5px; font-weight: 500;"
+                                data-lang-key="mobile_num">Mobile Number</label>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <span
+                                    style="padding: 10px; background: #f8f9fa; border: 1px solid #ddd; border-radius: var(--radius-md); font-weight: 500;">+91</span>
+                                <input type="tel" id="mobile-input" class="form-input" placeholder="98765 43210"
+                                    required pattern="[0-9]{10}" data-lang-key="placeholder_mobile_example"
+                                    style="flex: 1; padding: 10px; border: 1px solid #ddd; border-bottom-left-radius: var(--radius-md); border-bottom-right-radius: var(--radius-md);">
+                            </div>
+                        </div>
+                        <button type="submit" class="book-btn"
+                            style="width: 100%; justify-content: center; border: none; font-size: 16px;"
+                            data-lang-key="btn_login">Send OTP</button>
+                    </div>
+
+                    <div id="step-otp" style="display: none;">
+                        <div class="form-group" style="text-align: left; margin-bottom: 20px;">
+                            <label class="form-label" style="display: block; margin-bottom: 5px; font-weight: 500;"
+                                data-lang-key="enter_otp">Enter OTP</label>
+                            <input type="text" id="otp-input" class="form-input" placeholder="1234"
+                                data-lang-key="placeholder_otp_example"
+                                style="width: 100%; padding: 10px; text-align: center; letter-spacing: 5px; font-weight: 700; border: 1px solid #ddd; border-radius: var(--radius-md);">
+                        </div>
+                        <button type="button" id="verify-btn" class="book-btn"
+                            style="width: 100%; justify-content: center; border: none; font-size: 16px;"
+                            data-lang-key="btn_verify">Verify</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="view-welcome" class="section-padding"
+        style="display: none; min-height: auto; padding-top: 40px; padding-bottom: 40px;">
+        <div class="container">
+            <div class="glass-card"
+                style="max-width: 750px; margin: 0 auto; text-align: center; border-top: 4px solid var(--secondary); padding: 30px;">
+                <div
+                    style="background: #f0fdf4; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; color: var(--secondary); box-shadow: 0 4px 15px rgba(0,174,147,0.15);">
+                    <ion-icon name="heart" size="large" style="font-size: 32px;"></ion-icon>
+                </div>
+
+                <h2 style="margin-bottom: 8px; font-size: 28px;" id="welcome-message-text" data-lang-key="welcome_back">
+                    Welcome Back!</h2>
+                <p style="margin-bottom: 25px; font-size: 16px;" data-lang-key="welcome_helper">SeemantSaathi is
+                    here to help you.</p>
+
+                <div
+                    style="background: #f8fafc; padding: 20px; border-radius: var(--radius-md); border-left: 4px solid var(--primary); margin-bottom: 30px; font-style: italic; text-align: left;">
+                    <p style="font-size: 16px; line-height: 1.5; color: var(--text-main); margin: 0;"
+                        id="welcome-quote">"Your health is our greatest priority and your trust is our greatest
+                        strength."</p>
+                </div>
+
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                    <a href="symptoms.html" class="book-btn" style="padding: 12px 30px; font-size: 15px;"
+                        data-lang-key="card_symptom_btn">CHECK SYMPTOMS</a>
+                    <a href="doctors.html" class="book-btn"
+                        style="padding: 12px 30px; font-size: 15px; background: var(--secondary);"
+                        data-lang-key="card_doctor_btn">FIND DOCTOR</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="view-about" style="display: none;">
+
+
+
+        <section class="section-coe section-padding">
+            <div class="container">
+                <div class="section-head">
+                    <h2 data-lang-key="coe_title">Centers of Excellence</h2>
+                    <p data-lang-key="coe_subtitle">Bringing specialized medical expertise to your doorstep.</p>
+                </div>
+
+                <div class="coe-grid">
+
+                    <div class="coe-card">
+                        <div class="coe-img"
+                            style="background-image: url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');">
+                        </div>
+                        <div class="coe-content">
+                            <h3 class="coe-title" data-lang-key="card_symptom_title">Symptom Checker</h3>
+                            <p class="coe-desc" data-lang-key="card_symptom_desc">Instant analysis of your health
+                                symptoms
+                                using advanced AI technology specific to rural health needs.</p>
+                            <a href="symptoms.html" class="coe-link" data-lang-key="card_symptom_btn">CHECK NOW
+                                <ion-icon name="arrow-forward"></ion-icon></a>
+                        </div>
+                    </div>
+
+
+                    <div class="coe-card">
+                        <div class="coe-img"
+                            style="background-image: url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');">
+                        </div>
+                        <div class="coe-content">
+                            <h3 class="coe-title" data-lang-key="card_doctor_title">Find Doctors</h3>
+                            <p class="coe-desc" data-lang-key="card_doctor_desc">Locate the nearest government
+                                hospitals,
+                                private clinics, and specialists in Bhimtal.</p>
+                            <a href="doctors.html" class="coe-link" data-lang-key="card_doctor_btn">FIND DOCTOR
+                                <ion-icon name="arrow-forward"></ion-icon></a>
+                        </div>
+                    </div>
+
+
+                    <div class="coe-card">
+                        <div class="coe-img"
+                            style="background-image: url('https://images.unsplash.com/photo-1511174511562-5f7f18b874f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');">
+                        </div>
+                        <div class="coe-content">
+                            <h3 class="coe-title" data-lang-key="card_community_title">Community Health</h3>
+                            <p class="coe-desc" data-lang-key="card_community_desc">Dedicated programs for maternal
+                                care,
+                                vaccination drives, and seasonal disease prevention.</p>
+                            <a href="#" class="coe-link" data-lang-key="card_community_btn">LEARN MORE <ion-icon
+                                    name="arrow-forward"></ion-icon></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="section-stories section-padding" style="background: #f8fafc;">
+            <div class="container">
+                <div class="section-head">
+                    <h2 data-lang-key="stories_title">Patient Stories</h2>
+                    <p data-lang-key="stories_subtitle">Hear from the people of Bhimtal who trust us.</p>
+                </div>
+                <div class="coe-grid" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));">
+                    <div class="story-card">
+                        <ion-icon name="quote" class="quote-icon"></ion-icon>
+                        <p class="story-text" data-lang-key="story_1_text">
+                            "I was worried about my father's chest pain. SeemantSaathi guided us immediately to the
+                            right
+                            cardiologist nearby. It saved precious time."
+                        </p>
+                        <div class="story-author" data-lang-key="story_author_1">Rajesh Kumar</div>
+                        <div class="story-role" data-lang-key="story_1_role">Farmer, Bhimtal</div>
+                    </div>
+                    <div class="story-card">
+                        <ion-icon name="quote" class="quote-icon"></ion-icon>
+                        <p class="story-text" data-lang-key="story_2_text">
+                            "The symptom checker works in Hindi! It helped me understand that I just had a viral
+                            fever
+                            and
+                            not something worse. Very relieving."
+                        </p>
+                        <div class="story-author" data-lang-key="story_author_2">Sunita Devi</div>
+                        <div class="story-role" data-lang-key="story_2_role">Teacher, Bhimtal</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+
+
+
+
+    <div id="high-severity-modal" class="remote-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 class="modal-title" id="modal-title" data-lang-key="modal_attention">Attention</h3>
+            <p class="modal-body" id="modal-body" data-lang-key="modal_severity_body">Your symptoms indicate a condition
+                that may require immediate
+                attention.</p>
+            <button class="action-modal" id="modal-action-btn" data-lang-key="btn_consult_now">Consult Doctor
+                Now</button>
+        </div>
+    </div>
+
+
+    <div id="first-aid-modal" class="remote-modal">
+        <div class="modal-content wide">
+            <h3 class="modal-title">
+                <img src="images/first-aid-logo.png" alt="First Aid Logo"
+                    style="height: 40px; vertical-align: middle; margin-right: 15px;">
+                <span data-lang-key="fa_title">First Aid Guide</span>
+                <span class="close-modal"
+                    onclick="document.getElementById('first-aid-modal').classList.remove('active')"
+                    style="color: white; opacity: 1; cursor: pointer;">&times;</span>
+            </h3>
+            <div class="first-aid-grid">
+                <!-- Populated by script.js -->
+            </div>
+
+
+            <div class="fa-extra-section">
+                <div class="fa-dos-donts">
+                    <div class="fa-col">
+                        <h4 class="dos-title"><ion-icon name="checkmark-circle"></ion-icon> <span
+                                data-lang-key="fa_dos_title">Do's</span></h4>
+                        <ul class="fa-check-list">
+                            <li data-lang-key="fa_do_1">Stay calm</li>
+                            <li data-lang-key="fa_do_2">Call emergency services when needed</li>
+                            <li data-lang-key="fa_do_3">Use clean materials</li>
+                            <li data-lang-key="fa_do_4">Reassure the person</li>
+                        </ul>
+                    </div>
+                    <div class="fa-col">
+                        <h4 class="donts-title"><ion-icon name="close-circle"></ion-icon> <span
+                                data-lang-key="fa_donts_title">Don'ts</span></h4>
+                        <ul class="fa-cross-list">
+                            <li data-lang-key="fa_dont_1">Don’t give food/drink to unconscious person</li>
+                            <li data-lang-key="fa_dont_2">Don’t move a person with spinal injury</li>
+                            <li data-lang-key="fa_dont_3">Don’t apply home remedies to serious injuries</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="fa-emergency">
+                    <h4 data-lang-key="fa_emergency_title">Emergency Numbers (India)</h4>
+                    <div class="emer-badges">
+                        <div class="emer-badge" data-lang-key="emergency_108">Ambulance: <strong>108</strong></div>
+                        <div class="emer-badge" data-lang-key="emergency_112">Emergency: <strong>112</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4 data-lang-key="footer_about">About SeemantSaathi</h4>
+                    <p data-lang-key="footer_desc" style="color: inherit; opacity: 0.9;">Connecting rural India with
+                        expert healthcare. Predict symptoms, find doctors, and get first aid instantly.</p>
+                </div>
+                <div class="footer-col">
+                    <h4 data-lang-key="footer_quick">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><ion-icon name="arrow-forward"></ion-icon> <a href="index.html"
+                                data-lang-key="nav_home">Home</a></li>
+                        <li><ion-icon name="arrow-forward"></ion-icon> <a href="symptoms.html"
+                                data-lang-key="nav_checker">Symptom Checker</a></li>
+                        <li><ion-icon name="arrow-forward"></ion-icon> <a href="doctors.html"
+                                data-lang-key="nav_doctors">Find Doctors</a></li>
+                        <li><ion-icon name="arrow-forward"></ion-icon> <a href="#" data-lang-key="nav_firstaid"
+                                onclick="document.getElementById('first-aid-modal').classList.add('active'); return false;">First
+                                Aid</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4 data-lang-key="footer_centers_title">Our Centers</h4>
+                    <p style="margin-top: 10px; font-weight: 500; display: flex; align-items: center; gap: 8px;">
+                        <ion-icon name="location" style="color: var(--secondary);"></ion-icon>
+                        <span data-lang-key="center_bhimtal">Bhimtal</span>
+                    </p>
+                </div>
+
+            </div>
+            <div class="copyright">
+                <p data-lang-key="footer_copyright">© 2025 SeemantSaathi. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
