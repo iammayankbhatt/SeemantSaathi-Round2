@@ -1,0 +1,5 @@
+gradio_client
+# Preprocessing dependencies (for your local normalization)
+nltk
+deep-translator
+langdetect
